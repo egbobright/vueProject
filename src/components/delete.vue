@@ -1,18 +1,16 @@
 <template>
   <div>
-    <button class="btn btn-danger btn-icon btn-sm mr-3" data-toggle="modal" data-target="#modal-delete">
+    <button class="btn btn-danger btn-icon btn-sm mr-3" data-toggle="modal" :data-target="`#modal-delete`+username">
       <i class="fa fa-trash"></i>
     </button> 
 
-    <div class="modal fade" id="modal-delete" data-backdrop="static" aria-modal="true" role="dialog">
+    <div class="modal fade" :id="`modal-delete`+username" data-backdrop="static" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-sm">
           <div class="modal-content pt-4"> 
               <h4 class="text-center">Delete Marketer</h4> 
-            <div class="modal-body d-flex justify-content-between">   
-
-                  <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">No</button>
-                  <button type="button" id="del_button" class="btn btn-danger btn-lg" @click="DO_DEL()">Yes</button>
- 
+            <div class="modal-body d-flex justify-content-between">    
+              <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">No</button>
+              <button type="button" id="del_button" class="btn btn-danger btn-lg" @click="DO_DEL()">Yes</button> 
             </div>  
           </div>
           <!-- /.modal-content -->
