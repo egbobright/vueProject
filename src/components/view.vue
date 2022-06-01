@@ -1,10 +1,10 @@
 <template>
   <div>
-    <button class="btn btn-default btn-icon btn-sm mr-2" @click="LOAD_MARKETER()" data-toggle="modal" data-target="#modal-edit">
+    <button class="btn btn-default btn-icon btn-sm mr-2" @click="LOAD_MARKETER()" data-toggle="modal" :data-target="`#modal-edit`+mid">
       <i class="fa fa-eye"></i>
     </button> 
 
-    <div class="modal fade" id="modal-edit" data-backdrop="static" aria-modal="true" role="dialog">
+    <div class="modal fade" :id="`modal-edit`+mid" data-backdrop="static" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
@@ -17,7 +17,7 @@
  
               <div v-if="!editPane && !CHECK_IF_EMPTY(marketer) ">  
                 <div class="text-left">  
-                    <dl>
+                    <dl> 
  
                         <ul class="list-group list-group-unbordered mb-3">
                           <li class="list-group-item">
@@ -150,7 +150,7 @@
 
             </div> 
             <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-default btn-sm" @click="marketer = null;" data-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary btn-sm" v-if="!editPane" @click="editPane = true">Update marketer</button>
               <div class="d-flex justify-content-end" v-if="editPane">
                 <button type="button" class="btn btn-danger btn-sm mr-2" @click="editPane = false">close form</button>
@@ -169,12 +169,12 @@
 
 <script>
 import apiServices from "@/services"; 
-import {CHECK_IF_EMPTY, CAPITALIZE_STR, READABLE_DATE} from "@/utils/";  
+import {CHECK_IF_EMPTY, CAPITALIZE_STR, READABLE_DATE, CHECK_EMAIL_PATTERN} from "@/utils/";  
 export default {
   name: "view",
   props: ["mid"],
   data() {
-      return{    
+      return{  
         marketer: null,
         username: null,
         email: null,
@@ -191,7 +191,7 @@ export default {
         onSuccess: null,
         resMsg: '',  
         editPane: false,
-        CHECK_IF_EMPTY, CAPITALIZE_STR, READABLE_DATE,
+        CHECK_IF_EMPTY, CAPITALIZE_STR, READABLE_DATE, CHECK_EMAIL_PATTERN
 
       }
   },
@@ -199,28 +199,33 @@ export default {
   methods: { 
 
     DO_VALIDATE: function(){ 
-      if(
-        !CHECK_IF_EMPTY(this.username) 
-        || !CHECK_IF_EMPTY(this.email) 
-        || !CHECK_IF_EMPTY(this.firstname) 
-        || !CHECK_IF_EMPTY(this.lastname) 
-        || !CHECK_IF_EMPTY(this.address) 
-        || !CHECK_IF_EMPTY(this.gender) 
-        || !CHECK_IF_EMPTY(this.phonenumber) 
-        || !CHECK_IF_EMPTY(this.marketing_consultant_id) 
-        || !CHECK_IF_EMPTY(this.bankname) 
-        || !CHECK_IF_EMPTY(this.bankcode) 
-        || !CHECK_IF_EMPTY(this.accountNumber) 
-        || !CHECK_IF_EMPTY(this.accountName)
+      this.resMsg = '';
+
+      if(CHECK_IF_EMPTY(this.email)) this.resMsg = ' Email field cannot be empty...'; 
+      else if(!CHECK_EMAIL_PATTERN(this.email)) this.resMsg = ' Ensure no email address is valid.'; 
+      else if(
+        CHECK_IF_EMPTY(this.username)  
+        || CHECK_IF_EMPTY(this.firstname) 
+        || CHECK_IF_EMPTY(this.lastname) 
+        || CHECK_IF_EMPTY(this.address) 
+        || CHECK_IF_EMPTY(this.gender) 
+        || CHECK_IF_EMPTY(this.phonenumber) 
+        || CHECK_IF_EMPTY(this.marketing_consultant_id) 
+        || CHECK_IF_EMPTY(this.bankname) 
+        || CHECK_IF_EMPTY(this.bankcode) 
+        || CHECK_IF_EMPTY(this.accountNumber) 
+        || CHECK_IF_EMPTY(this.accountName)
       ){
-        document.getElementById('submit_button').innerHTML = 'Processing...'; // loading text. 
-        document.getElementById('submit_button').setAttribute(`disabled`, true); // disable login button. 
-        this.DO_SUBMISSION()
+        this.resMsg = ' Ensure no field is not empty..';  
       }
-      else this.resMsg = ' Ensure no field is not empty..'; 
+      else {
+        document.getElementById('submit_button').innerHTML = 'Processing...'; // loading text. 
+        document.getElementById('submit_button').setAttribute(`disabled`, true); // disable login button.
+        this.DO_SUBMISSION(); 
+      }  
     }, 
     
-    LOAD_MARKETER: function(){  
+    LOAD_MARKETER: function(){ 
       apiServices.GET_MARKETER(this.mid)
       .then(result =>{ // SERVER RESPONSE
 
@@ -228,20 +233,18 @@ export default {
  
           if(result.status === 200){  // If request failed 
             this.marketer = result.data.marketer[0];
-            this.username= this.marketer.username;
-            this.email= this.marketer.email;
-            this.firstname= this.marketer.firstname;
-            this.lastname= this.marketer.lastname;
-            this.address= this.marketer.address;
-            this.gender=  CAPITALIZE_STR(this.marketer.gender); 
-            this.phonenumber= this.marketer.phonenumber;
-            this.marketing_consultant_id= this.marketer.marketing_consultant_id;
-            this.bankname= this.marketer.bankname;
-            this.bankcode= this.marketer.bankcode;
-            this.accountNumber= this.marketer.account_number;
-            this.accountName= this.marketer.account_name; 
-
-            console.log(this.marketer)
+            this.username= result.data.marketer[0].username;
+            this.email= result.data.marketer[0].email;
+            this.firstname= result.data.marketer[0].firstname;
+            this.lastname= result.data.marketer[0].lastname;
+            this.address= result.data.marketer[0].address;
+            this.gender=  CAPITALIZE_STR(result.data.marketer[0].gender); 
+            this.phonenumber= result.data.marketer[0].phonenumber;
+            this.marketing_consultant_id= result.data.marketer[0].marketing_consultant_id;
+            this.bankname= result.data.marketer[0].bankname;
+            this.bankcode= result.data.marketer[0].bankcode;
+            this.accountNumber= result.data.marketer[0].account_number;
+            this.accountName= result.data.marketer[0].account_name;  
           }
           else{ // if success
             this.onSuccess = true; 
@@ -271,9 +274,7 @@ export default {
         "accountName": this.accountName,
       } // request body. 
       apiServices.UPDATE_MARKETER(data)
-      .then(result =>{ // SERVER RESPONSE
-
-        // console.log(ds.token)
+      .then(result =>{ // SERVER RESPONSE 
 
           document.getElementById('submit_button').removeAttribute(`disabled`); // enable login button 
           document.getElementById('submit_button').innerHTML = 'Update marketer'; 
@@ -300,9 +301,7 @@ export default {
     }
 
   }, 
-  mounted() {
-   
+  mounted() {   
   } 
 };
 </script>
- 

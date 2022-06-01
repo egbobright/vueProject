@@ -97,7 +97,7 @@
 
 <script>
 import apiServices from "@/services"; 
-import {CHECK_IF_EMPTY} from "@/utils/";  
+import {CHECK_IF_EMPTY, CHECK_EMAIL_PATTERN} from "@/utils/";  
 export default {
   name: "add", 
   data() {
@@ -111,19 +111,24 @@ export default {
         phone: null,
         onSuccess: null,
         resMsg: '',  
-        CHECK_IF_EMPTY,
+        CHECK_IF_EMPTY, CHECK_EMAIL_PATTERN
       }
   },
 
   methods: { 
 
     DO_VALIDATE: function(){ 
-      if(!CHECK_IF_EMPTY(this.username) || !CHECK_IF_EMPTY(this.email) || !CHECK_IF_EMPTY(this.firstname) || !CHECK_IF_EMPTY(this.lastname) || !CHECK_IF_EMPTY(this.address) || !CHECK_IF_EMPTY(this.gender) || !CHECK_IF_EMPTY(this.phone)){
+      this.resMsg = '';
+      if(CHECK_IF_EMPTY(this.email)) this.resMsg = ' Email field cannot be empty...'; 
+      else if(!CHECK_EMAIL_PATTERN(this.email)) this.resMsg = ' Ensure email address is valid.'; 
+      else if(CHECK_IF_EMPTY(this.username) || CHECK_IF_EMPTY(this.email) || CHECK_IF_EMPTY(this.firstname) || CHECK_IF_EMPTY(this.lastname) || CHECK_IF_EMPTY(this.address) || CHECK_IF_EMPTY(this.gender) || CHECK_IF_EMPTY(this.phone)){
+        this.resMsg = ' Ensure no field is not empty..';
+      } 
+      else {
+        this.DO_SUBMISSION(); 
         document.getElementById('submit_button').innerHTML = 'Processing...'; // loading text. 
-        document.getElementById('submit_button').setAttribute(`disabled`, true); // disable login button. 
-        this.DO_SUBMISSION()
+        document.getElementById('submit_button').setAttribute(`disabled`, true); // disable login button.
       }
-      else this.resMsg = ' Ensure no field is not empty..'; 
     }, 
     DO_SUBMISSION: function(){ 
       
@@ -139,9 +144,7 @@ export default {
       } // request body. 
       
     apiServices.ADD_MARKETER(data)
-        .then(result =>{ // SERVER RESPONSE
- 
-          // console.log(ds.token)
+        .then(result =>{ // SERVER RESPONSE 
 
             document.getElementById('submit_button').removeAttribute(`disabled`); // enable login button 
             document.getElementById('submit_button').innerHTML = 'Save marketer'; 
@@ -160,7 +163,8 @@ export default {
               this.lastName = null;
               this.address = null;
               this.gender = null; 
-              this.phone = null;   
+              this.phone = null; 
+              setTimeout(() => location.reload(true), 500)  
             }  
         })
         .catch(err => {
