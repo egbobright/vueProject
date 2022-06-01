@@ -52,43 +52,40 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import Header from "@/components/global/header.vue";
-import apiServices from "@/services"; 
-import {CHECK_IF_EMPTY} from "@/utils/";  
+// @ is an alias to /src 
+import apiServices from "@/services"; // IMPORT SERVER ROUTE SERVICES 
+import {CHECK_IF_EMPTY, CHECK_EMAIL_PATTERN} from "@/utils/"; // IMPORT REUSEABLE JS FUNCTIONS 
 
 export default {
 name: "Login",
 data() {
     return{   
-      remember: this.$store.state.rememberUser !== null ? this.$store.state.rememberUser.remember : false ,
+      remember: this.$store.state.rememberUser !== null ? this.$store.state.rememberUser.remember : false,
       username: this.$store.state.rememberUser !== null ? this.$store.state.rememberUser.username : '',
       password: this.$store.state.rememberUser !== null ? this.$store.state.rememberUser.password : '',
       onSuccess: null,
-      resMsg: ' ',  
-      CHECK_IF_EMPTY,
+      resMsg: '',  
+      CHECK_IF_EMPTY, CHECK_EMAIL_PATTERN,
     }
-},
-components: {
-    // Header,
 },  
 methods: { 
 
-    DO_VALIDATE: function(){ 
-      if(!CHECK_IF_EMPTY(this.username) || !CHECK_IF_EMPTY(this.password)){
-        document.getElementById('login_button').innerHTML = 'Loading...'; // loading text. 
-        document.getElementById('login_button').setAttribute(`disabled`, true); // disable login button. 
-        this.DO_LOGIN()
-      }else{
-        this.resMsg = ' Ensure username or password is not empty';
+    DO_VALIDATE: function(){ // VALIDATE REQUEST BODY BEFORE SENDING TO SERVER
+      if(!CHECK_IF_EMPTY(this.username) || !CHECK_IF_EMPTY(this.password)){ // CHECK IF USERNAME & PASSWORD IS EMPTY.
+        document.getElementById('login_button').innerHTML = 'Loading...'; // Trigger loading text. 
+        document.getElementById('login_button').setAttribute(`disabled`, true); // Trigger disable login button. 
+        this.DO_LOGIN() // CALL LOGIN FUNCTION
+      }
+      else{
+        this.resMsg = ' Ensure username or password is not empty'; // on error show message.
       }
     },
       
-    DO_LOGIN: function(){ 
+    DO_LOGIN: function(){ // FUNCTION FOR USE LOGIN
       
-      let data = {'username': this.username, 'password': this.password} // login data object.
+      let data = {'username': this.username, 'password': this.password} // Prepare login data object.
 
-      this.remember ? this.$store.commit('AUTH_REMEMBER', { 'username': this.username, 'password': this.password, 'remember': this.remember}) : null; //Remember user  
+      this.remember ? this.$store.commit('AUTH_REMEMBER', { 'username': this.username, 'password': this.password, 'remember': this.remember}) : null; //Remember user if remember check box is active. 
       
     apiServices.DO_LOGIN(data)
         .then(result =>{ // SERVER RESPONSE 
@@ -101,14 +98,14 @@ methods: {
               this.resMsg = result.data.message;
               document.getElementById('login_button').innerHTML = 'Sign in'; 
             }
-            else{ // if success
+            else{ // if request was successfull.
               this.onSuccess = true; 
               this.resMsg = 'Login operation successful, ';
               this.$store.commit('AUTH_SUCCESS', result.data);   
-              setTimeout(() => this.$router.push('/'), 800)  // redirct to dashboard   
+              setTimeout(() => this.$router.push('/'), 800)  // redirct to dashboard after 8 mili seconds 
             }  
         })
-        .catch(err => {
+        .catch(err => { // If there was an error.
             console.log(err.message) 
             this.onSuccess = false;
             this.resMsg = 'an internal server error occured.';

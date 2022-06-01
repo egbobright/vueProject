@@ -77,18 +77,12 @@
 
 
 <script>
-// @ is an alias to /src
-//general resources
-// import Header from "@/components/global/auth/header.vue"; 
-// import SideNavbar from "@/components/global/auth/sideNavbar.vue";  
-// import cardLoader from "@/components/utils/cardLoader.vue";
-// import loadError from "@/components/utils/loadError.vue"; 
-// import EmptyData from "@/components/global/emptyData.vue";
-import addModal from "@/components/add.vue";
-import viewModal from "@/components/view.vue";
-import delModal from "@/components/delete.vue";
-import apiServices from "@/services"; 
-import {TRUNCATE_STRING, CAPITALIZE_STR, READABLE_DATE, CHECK_IF_EMPTY, SEARCH_ARR} from "@/utils/";
+// @ is an alias to /src 
+import addModal from "@/components/add.vue"; // add marketer modal component
+import viewModal from "@/components/view.vue"; // view marketer modal component
+import delModal from "@/components/delete.vue"; // delete marketer modal component
+import apiServices from "@/services"; // server route services
+import {TRUNCATE_STRING, CAPITALIZE_STR, READABLE_DATE, CHECK_IF_EMPTY, SEARCH_ARR} from "@/utils/"; // import custom reusable js functions
 
 export default {
 name: "Dashboard",
@@ -115,13 +109,11 @@ components: {
 methods: {    
 
     
-    SEARCH_MKTRS: function(){ 
-      this.filterEntries = true;
-      this.marketers = SEARCH_ARR(this.marketers, this.search_keyword.toUpperCase()) 
-      console.log(this.marketers) 
+    SEARCH_MKTRS: function(){ // Function to search marketers 
+      this.marketers = SEARCH_ARR(this.marketers, this.search_keyword.toUpperCase())  
     },
 
-    LOAD_MARKETERS: function(){ // FETCH ALL MESSAGES FROM DATABASE 
+    LOAD_MARKETERS: function(){ // FETCH ALL MARKETRS FROM SERVER 
         this.retry = ''
         apiServices.LOAD_MARKETERS()
         .then(result =>{  
@@ -133,12 +125,11 @@ methods: {
     },  
 
     RELOAD: function(){ 
-      this.LOAD_MARKETERS()
+      this.LOAD_MARKETERS() // FUNCTION TO RELOAD MARKETERS
     } 
 }, 
 mounted() {
-  this.LOAD_MARKETERS(); // EXECUTE LOAD MESSAGE 
-  // this.GET_NEXT_PAYLOAD();  
+  this.LOAD_MARKETERS(); // ON PAGE LOAD, TRIGGER ALL MARKETERS.
 } 
 
 };

@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"; 
 import NProgress from 'nprogress';
-import 'nprogress/nprogress.css';
-import {CHECK_IF_EMPTY} from '@/utils';
+import 'nprogress/nprogress.css'; 
 import store from '@/store';
 
 const routes = [ 
@@ -10,7 +9,7 @@ const routes = [
     name: "login", 
     meta: { 
       title: "User login", 
-      requires_auth: true, /* CHECK USER ACCESS */  
+      requires_auth: false, /* CHECK USER ACCESS */  
     }, 
     component: () => import(/* webpackChunkName: "login" */ "@/views/auth/login.vue"),
   },
@@ -43,7 +42,7 @@ router.beforeResolve((to, from, next) => {
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title  
   if (to.matched.some(record => record.meta.requires_auth)) {
-      if (store.state.is_authenticated || !CHECK_IF_EMPTY(store.state.user)) next();   
+      if (store.state.is_authenticated) next();   
       else next(`/login`); // send user to login page with intending page so as to execute a redirect after login
   }
 
