@@ -114,28 +114,28 @@
                   <div class="col-md-6">
                   <div class="form-group">
                     <label>Bank name</label>
-                    <input type="text" class="form-control" placeholder="Enter bank" v-model="bankname">
+                    <input type="text" class="form-control" placeholder="Enter bank name" v-model="bankname">
                   </div>
                   </div> 
 
                   <div class="col-md-6">
                   <div class="form-group">
                     <label>Bank code</label>
-                    <input type="text" class="form-control" placeholder="Enter bank" v-model="bankcode">
+                    <input type="text" class="form-control" placeholder="Enter bank code" v-model="bankcode">
                   </div>
                   </div> 
 
                   <div class="col-md-6">
                   <div class="form-group">
                     <label>Account number</label>
-                    <input type="text" class="form-control" placeholder="Enter bank" v-model="accountNumber">
+                    <input type="text" class="form-control" placeholder="Enter account number" v-model="accountNumber">
                   </div>
                   </div> 
 
                   <div class="col-md-6">
                   <div class="form-group">
                     <label>Account Name</label>
-                    <input type="text" class="form-control" placeholder="Enter address" v-model="accountName">
+                    <input type="text" class="form-control" placeholder="Enter account name" v-model="accountName">
                   </div>
                   </div> 
  
